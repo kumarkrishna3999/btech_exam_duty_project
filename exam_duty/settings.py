@@ -8,9 +8,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ---------------- SECURITY ----------------
 SECRET_KEY = 'example-secret-key'
 
-DEBUG = True   # keep True for local testing
+DEBUG = False   # keep True for local testing
 
-ALLOWED_HOSTS = ['btech-exam-duty-project.onrender.com']
+ALLOWED_HOSTS = [
+    'btech-exam-duty-project.onrender.com',
+    '.onrender.com'
+]
 
 # ---------------- INSTALLED APPS ----------------
 INSTALLED_APPS = [
