@@ -1,4 +1,3 @@
-# settings.py
 import os
 from pathlib import Path
 
@@ -8,11 +7,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ---------------- SECURITY ----------------
 SECRET_KEY = 'example-secret-key'
 
-DEBUG = False   # keep True for local testing
+DEBUG = False   # Set True for local testing
 
 ALLOWED_HOSTS = [
     'btech-exam-duty-project.onrender.com',
-    '.onrender.com'
+    '.onrender.com',
 ]
 
 # ---------------- INSTALLED APPS ----------------
@@ -29,9 +28,7 @@ INSTALLED_APPS = [
 # ---------------- MIDDLEWARE ----------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # must be after SecurityMiddleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -47,16 +44,12 @@ ROOT_URLCONF = 'exam_duty.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-
         'DIRS': [BASE_DIR / 'duty/templates'],
-
         'APP_DIRS': True,
-
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -70,7 +63,7 @@ WSGI_APPLICATION = 'exam_duty.wsgi.application'
 # ---------------- DATABASE ----------------
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.sqlite3',  # Use PostgreSQL for production
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
@@ -80,21 +73,14 @@ AUTH_PASSWORD_VALIDATORS = []
 
 # ---------------- INTERNATIONALIZATION ----------------
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Asia/Kolkata'
-
 USE_I18N = True
 USE_TZ = True
 
 # ---------------- STATIC FILES ----------------
 STATIC_URL = '/static/'
-
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
-
+STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
-
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # ---------------- DEFAULT AUTO FIELD ----------------
