@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ---------------- SECURITY ----------------
 SECRET_KEY = 'example-secret-key'
 
-DEBUG = False   # Set True for local testing
+DEBUG = True   # Set True for local testing
 
 ALLOWED_HOSTS = [
     'btech-exam-duty-project.onrender.com',
