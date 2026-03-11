@@ -1,13 +1,16 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+# Exit immediately if a command exits with a non-zero status.
 set -e
 
-echo "Installing dependencies..."
+# Upgrade pip and install requirements
+pip install --upgrade pip
 pip install -r requirements.txt
 
-echo "Running migrations..."
-python manage.py migrate
+# Run migrations automatically
+python manage.py migrate --noinput
 
-echo "Collecting static files..."
+# Collect static files
 python manage.py collectstatic --noinput
 
-echo "Build finished!"
+echo "Build completed successfully!"
