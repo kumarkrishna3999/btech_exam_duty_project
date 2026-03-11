@@ -13,12 +13,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'unsafe-local-key')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'  # False in production
 
 # ---------------- ALLOWED HOSTS ----------------
-ALLOWED_HOSTS = [
-    'btech-exam-duty-project.onrender.com',
-    '.onrender.com',
-    'localhost',
-    '127.0.0.1',
-]
+ALLOWED_HOSTS = ['btech-exam-duty-project.onrender.com']
 
 # ---------------- INSTALLED APPS ----------------
 INSTALLED_APPS = [
