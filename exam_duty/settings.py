@@ -9,10 +9,7 @@ SECRET_KEY = 'example-secret-key'
 
 DEBUG = True   # Set True for local testing
 
-ALLOWED_HOSTS = [
-    'btech-exam-duty-project.onrender.com',
-    '.onrender.com',
-]
+ALLOWED_HOSTS = ['*']  # only temporarily for debugging
 
 # ---------------- INSTALLED APPS ----------------
 INSTALLED_APPS = [
