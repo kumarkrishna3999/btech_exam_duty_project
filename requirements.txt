@@ -1,4 +1,10 @@
-Django>=4.3,<5
+
 whitenoise
+asgiref==3.11.1
+packaging==26.0
+sqlparse==0.5.5
+typing_extensions==4.15.0
+whitenoise==6.11.0
+Django>=4.2
 gunicorn
-psycopg2
+psycopg2-binary   # if using PostgreSQL

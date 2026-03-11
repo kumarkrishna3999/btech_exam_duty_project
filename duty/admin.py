@@ -15,11 +15,18 @@ from .models import (
     Subject
 )
 
+# ---------------- Helper to safely register models ----------------
+def safe_register(model, admin_class=None):
+    try:
+        if admin_class:
+            admin.site.register(model, admin_class)
+        else:
+            admin.site.register(model)
+    except admin.sites.AlreadyRegistered:
+        pass
 
 # ---------------- DUTY GENERATOR ----------------
-
 def generate_duties(shift):
-
     rooms = list(Room.objects.filter(is_active=True).order_by("room_number"))
     faculty = list(Faculty.objects.filter(is_active=True))
     labtechs = list(LabTech.objects.filter(is_active=True))
@@ -39,15 +46,12 @@ def generate_duties(shift):
     lab_index = 0
 
     for room in rooms:
-
         inv1 = faculty[faculty_index % len(faculty)]
         faculty_index += 1
 
         if labtechs and random.choice([True, False]):
-
             inv2 = labtechs[lab_index % len(labtechs)]
             lab_index += 1
-
             duties.append(
                 Duty(
                     shift=shift,
@@ -56,12 +60,9 @@ def generate_duties(shift):
                     invigilator2_labtech=inv2
                 )
             )
-
         else:
-
             inv2 = faculty[faculty_index % len(faculty)]
             faculty_index += 1
-
             duties.append(
                 Duty(
                     shift=shift,
@@ -73,11 +74,8 @@ def generate_duties(shift):
 
     Duty.objects.bulk_create(duties)
 
-
 # ---------------- SHIFT ADMIN ----------------
-
 class ShiftAdmin(admin.ModelAdmin):
-
     list_display = (
         "exam_date",
         "shift_type",
@@ -86,7 +84,6 @@ class ShiftAdmin(admin.ModelAdmin):
         "shuffle_button",
         "lock_button",
     )
-
     filter_horizontal = ("subjects",)
 
     def subject_list(self, obj):
@@ -94,9 +91,7 @@ class ShiftAdmin(admin.ModelAdmin):
     subject_list.short_description = "Subjects"
 
     def get_urls(self):
-
         urls = super().get_urls()
-
         custom_urls = [
             path(
                 "view-chart/<int:shift_id>/",
@@ -111,58 +106,40 @@ class ShiftAdmin(admin.ModelAdmin):
                 self.admin_site.admin_view(self.lock_shift),
             ),
         ]
-
         return custom_urls + urls
 
     # ---------- VIEW CHART ----------
-
     def view_chart(self, request, shift_id):
-
         shift = get_object_or_404(Shift, pk=shift_id)
-
         if not shift.is_locked:
             generate_duties(shift)
 
         duties = Duty.objects.filter(shift=shift).order_by("room__room_number")
-
         return render(
             request,
             "duty/duty_chart.html",
-            {
-                "shift": shift,
-                "duties": duties,
-            },
+            {"shift": shift, "duties": duties},
         )
 
     # ---------- SHUFFLE ----------
-
     def shuffle_shift(self, request, shift_id):
-
         shift = get_object_or_404(Shift, pk=shift_id)
-
         if shift.is_locked:
             messages.error(request, "Shift is locked. Unlock to shuffle.")
             return redirect("/admin/duty/shift/")
 
         generate_duties(shift)
-
         messages.success(request, "Duties shuffled successfully!")
-
         return redirect(f"/admin/duty/shift/view-chart/{shift_id}/")
 
     # ---------- LOCK ----------
-
     def lock_shift(self, request, shift_id):
-
         shift = get_object_or_404(Shift, pk=shift_id)
-
         shift.is_locked = not shift.is_locked
         shift.save()
-
         return redirect("/admin/duty/shift/")
 
     # ---------- BUTTONS ----------
-
     def view_chart_button(self, obj):
         return format_html(
             '<a class="button" href="/admin/duty/shift/view-chart/{}/">View</a>',
@@ -170,80 +147,54 @@ class ShiftAdmin(admin.ModelAdmin):
         )
 
     def shuffle_button(self, obj):
-
         if obj.is_locked:
             return "Locked"
-
         return format_html(
             '<a class="button" href="/admin/duty/shift/shuffle/{}/">Shuffle</a>',
             obj.id,
         )
 
     def lock_button(self, obj):
-
         label = "Unlock" if obj.is_locked else "Lock"
-
         return format_html(
             '<a class="button" href="/admin/duty/shift/lock/{}/">{}</a>',
             obj.id,
             label,
         )
 
-
-# ---------------- FACULTY ADMIN ----------------
-
+# ---------------- OTHER ADMINS ----------------
 class FacultyAdmin(admin.ModelAdmin):
-
     list_display = ("name", "is_active")
     list_editable = ("is_active",)
     search_fields = ("name",)
-
-
-# ---------------- LABTECH ADMIN ----------------
 
 class LabTechAdmin(admin.ModelAdmin):
-
     list_display = ("name", "is_active")
     list_editable = ("is_active",)
     search_fields = ("name",)
 
-
-# ---------------- ROOM ADMIN ----------------
-
 class RoomAdmin(admin.ModelAdmin):
-
     list_display = ("room_number", "is_active")
     list_editable = ("is_active",)
     search_fields = ("room_number",)
 
-
-# ---------------- COURSE ADMIN ----------------
-
 class CourseAdmin(admin.ModelAdmin):
-
     list_display = ("name",)
 
-
-# ---------------- SEMESTER ADMIN ----------------
-
 class SemesterAdmin(admin.ModelAdmin):
-
     list_display = ("number",)
 
-
-# ---------------- SUBJECT ADMIN ----------------
-
 class SubjectAdmin(admin.ModelAdmin):
-
     list_display = ("name", "code", "course", "semester")
     list_filter = ("course", "semester")
     search_fields = ("name", "code")
-# ---------------- REGISTER MODELS ----------------
 
-admin.site.register(Shift, ShiftAdmin)
-admin.site.register(Faculty, FacultyAdmin)
-admin.site.register(LabTech, LabTechAdmin)
-admin.site.register(Room, RoomAdmin)
-admin.site.register(Course, CourseAdmin)
-admin.site.register(Semester, SemesterAdmin)
-admin.site.register(Subject, SubjectAdmin)
+# ---------------- REGISTER MODELS ----------------
+safe_register(Shift, ShiftAdmin)
+safe_register(Faculty, FacultyAdmin)
+safe_register(LabTech, LabTechAdmin)
+safe_register(Room, RoomAdmin)
+safe_register(Course, CourseAdmin)
+safe_register(Semester, SemesterAdmin)
+safe_register(Subject, SubjectAdmin)
+safe_register(Duty)  # Duty can also be registered if needed

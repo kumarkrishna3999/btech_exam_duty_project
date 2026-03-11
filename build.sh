@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+<<<<<<< HEAD
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
@@ -14,3 +15,10 @@ python manage.py migrate --noinput
 python manage.py collectstatic --noinput
 
 echo "Build completed successfully!"
+=======
+pip install -r requirements.txt
+
+python manage.py collectstatic --noinput
+
+python manage.py migrate
+>>>>>>> 8d9e48811fb414962ba8ebd80ba0d6ccd30a8213
