@@ -6,16 +6,15 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ---------------- SECURITY ----------------
-# Use environment variable for production
 SECRET_KEY = os.environ.get('SECRET_KEY', 'unsafe-local-key')
 
 # ---------------- DEBUG ----------------
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'  # False in production
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # ---------------- ALLOWED HOSTS ----------------
 ALLOWED_HOSTS = ["*"]
 
-# ---------------- INSTALLED APPS ----------------
+# ---------------- INSTALLED APPS (DEFAULT DJANGO) ----------------
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -29,7 +28,7 @@ INSTALLED_APPS = [
 # ---------------- MIDDLEWARE ----------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # for static files on Render
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -62,7 +61,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'exam_duty.wsgi.application'
 
 # ---------------- DATABASE ----------------
-# Use Render Postgres if environment variable exists, otherwise fallback to SQLite
 if os.environ.get('DATABASE_URL'):
     import dj_database_url
     DATABASES = {
@@ -96,7 +94,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ---------------- MESSAGE SETTINGS ----------------
 from django.contrib.messages import constants as messages
-
 MESSAGE_TAGS = {
     messages.DEBUG: 'debug',
     messages.INFO: 'info',
